@@ -27,7 +27,3 @@ fields:
     extends: fields/social-media
     when:
       type: social-media
-
-  inline:
-    label: Inline
-    type: toggle

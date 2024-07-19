@@ -1,0 +1,11 @@
+name: Paragraphe avec liens personnalisé
+
+icon: url
+
+fields:
+
+  links:
+    label: Liens
+    type: blocks
+    fieldsets:
+      - custom-link

@@ -15,12 +15,14 @@ Kirby::plugin('vv/custom-link', [
   'blueprints' => [
     'blocks/custom-link' => __DIR__ . '/blueprints/blocks/custom-link.yml',
     'blocks/custom-link-grid' => __DIR__ . '/blueprints/blocks/custom-link-grid.yml',
+    'blocks/custom-link-p' => __DIR__ . '/blueprints/blocks/custom-link-p.yml',
     'fields/custom-link-type' => include __DIR__ . '/blueprints/fields/custom-link-type.php',
   ],
 
   'snippets' => [
     'blocks/custom-link' => __DIR__ . '/snippets/blocks/custom-link.php',
     'blocks/custom-link-grid' => __DIR__ . '/snippets/blocks/custom-link-grid.php',
+    'blocks/custom-link-p' => __DIR__ . '/snippets/blocks/custom-link-p.php',
   ],
 
   'blockModels' => [
