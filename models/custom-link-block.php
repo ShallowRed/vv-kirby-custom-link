@@ -1,56 +1,78 @@
 <?php
 
-return function ($human) {
-  $dataSkills = $human->expertises()->split();
-  $gender = $human->gender();
-  $firstname = $human->firstname();
-  $name = $human->name();
-  $job = $human->job();
-  $ariaLabel = 'En savoir plus sur ' . $firstname . ' ' . $name;
+use Kirby\Cms\Block;
+use Kirby\Cms\Content;
 
-  $alt = 'Portrait de ' . $firstname . ' ' . $name;
-  $cover = $human->cover()->isNotEmpty()
-  ? snippet('figure', [
-    'file' => $human->cover()->toFile(),
-    'options' => [
-      'ratio' => '1/1',
-      'imgAttributes' => [
-        'shared' => [
-          'class' => 'human-cover',
-          'alt' => $alt,
-          'sizes' => '100vw',
-        ],
-      ]
-    ],
-  ], true)
-  : null;
+class CustomLinkBlock extends Block
+{
+  private $props = null;
+  private $link = null;
+  private $linkType = null;
 
-  $senioritySlug = $human->seniority()->value();
-  $seniority = page()->getSeniorityLevel($senioritySlug, $gender->value());
-  $seniorityDetails = page()->getSeniorityLevelDetails($senioritySlug);
-
-  $rawSkills = $human->skills()->isNotEmpty()
-  ? $human->skills()->split()
-  : [];
-  $skills = [];
-  foreach ($rawSkills as $skill) {
-    $skillDetail = page()->getSkill($skill);
-    if ($skillDetail) {
-      $skills[] = $skillDetail->name();
+  private function props()
+  {
+    if (!isset($this->props)) {
+      $this->props ??= new Content(collection('custom-link-types')[$this->linkType()]);
     }
+    return $this->props;
   }
 
-  return compact([
-    'dataSkills',
-    'gender',
-    'ariaLabel',
-    'cover',
-    'alt',
-    'firstname',
-    'name',
-    'job',
-    'seniority',
-    'seniorityDetails',
-    'skills'
-  ]);
-};
+  private function linkType(): string
+  {
+    $this->linkType ??= $this->content()->type()->value();
+    return $this->linkType;
+  }
+
+  private function link(): string
+  {
+    $this->link ??= $this->content()->link()->value();
+    return $this->link;
+  }
+
+  public function href(): string
+  {
+    return $this->props()->prefix()->value() . $this->link();
+  }
+
+  public function text(): string
+  {
+    $text = $this->content()->text()->value();
+    if (empty($text) === true) {
+      $text = $this->link();
+    }
+    return Html::span([$text], ['class' => 'custom-link__text']);
+  }
+
+  public function prefix(): string
+  {
+    $prefix = $this->content()->prefix()->value();
+    return $prefix ? Html::span([$prefix]) : '';
+  }
+
+  public function suffix(): string
+  {
+    $suffix = $this->content()->suffix()->value();
+    return $suffix ? Html::span([$suffix]) : '';
+  }
+
+  public function icon(): string
+  {
+    if ("social-media" === $this->linkType()) {
+      $className = $this->content()->socialmedia();
+    } else {
+      $iconKey = $this->props()->iconKey()->value();
+      $icon = site()->icon($iconKey);
+      $className = $this->props()->icon()->value();
+    }
+
+    return Html::span('', ['class' => $className]);
+  }
+
+  public function linkAttrs(): array
+  {
+    $target = $this->props()->target()->value() ?? '_self';
+    return [
+      'target' => $target,
+    ];
+  }
+}
