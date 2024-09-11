@@ -2,6 +2,9 @@ name: Lien personnalisé
 
 icon: url
 
+preview: fields
+wysiwyg: true
+
 fields:
 
   prefix:
