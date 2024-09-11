@@ -2,6 +2,8 @@ name: Paragraphe avec liens personnalisé
 
 icon: url
 
+preview: fields
+wysiwyg: true
 fields:
 
   links:
